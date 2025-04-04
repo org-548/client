@@ -89,7 +89,7 @@ jobs:
             git commit -m "${{ env.COMMIT_MESSAGE }}"
             git push
           else
-            echo "No changes
+            echo "No changes"
             exit 0
           fi
 
