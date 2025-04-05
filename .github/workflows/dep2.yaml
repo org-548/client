@@ -31,6 +31,12 @@ jobs:
           role-to-assume: arn:aws:iam::637423489195:role/role-for-github-oidc
           aws-region: eu-north-1
 
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.32.3'
+        id: install     
+
       - name: Git Setup  
         shell: bash
         run: |
@@ -55,12 +61,19 @@ jobs:
         run: |
           terraform apply --auto-approve
 
+      - name: Inject api-url in appropriate file
+        run: |
+          kubectl update-kubeconfig --name first-eks --region eu-north-1
+          kubectl get no -o wide | awk '$2 == "LoadBalancer" {print $4}' > lb-value.out
+          export API_URL="$(cat lb-value.out)"
+          envsubst < index.htm > index.html
+          
+      - name: Get short SHA
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV    
+
       - name: Login to Amazon ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2      
-
-      - name: Get short SHA
-        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Build, tag and push image to AWS ECR
         env:
@@ -70,6 +83,11 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG  
+
+      - name: Unset variable value and delete .html file
+        run: |
+          unset API_URL
+          rm index.html
 
       - name: Update tag in appropriate values.yaml file
         working-directory: infra/charts/values
@@ -92,13 +110,7 @@ jobs:
           else
             echo "No changes"
             exit 0
-          fi
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'v1.32.3'
-        id: install    
+          fi    
 
       - name: Udpate kubeconfig
         run: aws eks update-kubeconfig --region eu-north-1 --name first-eks
@@ -117,3 +129,5 @@ jobs:
         working-directory: infra/charts
         run: |
           helmwave up --build --kubedog    
+
+          
