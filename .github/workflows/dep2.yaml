@@ -63,7 +63,7 @@ jobs:
 
       - name: Inject api-url in appropriate file
         run: |
-          kubectl update-kubeconfig --name first-eks --region eu-north-1
+          aws eks update-kubeconfig --name first-eks --region eu-north-1
           kubectl get no -o wide | awk '$2 == "LoadBalancer" {print $4}' > lb-value.out
           export API_URL="$(cat lb-value.out)"
           envsubst < index.htm > index.html
