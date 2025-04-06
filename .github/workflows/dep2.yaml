@@ -2,8 +2,10 @@ name: Deployment v.2
 
 on:
   repository_dispatch:
-    types: [trigger-workflow]
-
+    type:
+      - trigger-workflow
+  workflow_dispatch:
+  
 jobs:
   first:
     name: first-job
