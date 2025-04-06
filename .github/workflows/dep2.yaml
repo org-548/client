@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout primary repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.sha }}
 
       - name: Checkout target repo
         uses: actions/checkout@v4
