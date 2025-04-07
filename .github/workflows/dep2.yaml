@@ -73,6 +73,9 @@ jobs:
           kubectl get ingress -n somens | awk '$2 == "nginx" {print $4}' > lb-value.out
           export API_URL="$(cat lb-value.out)"
           envsubst < index.htm > index.html
+          ls -lah
+          echo api-url is $API_URL
+          cat index.html
           
       - name: Get short SHA
         run: |
