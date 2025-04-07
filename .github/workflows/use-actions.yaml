@@ -19,7 +19,7 @@ jobs:
       ecr-repo-name: client-repo
       values-file: fnt-values.yaml
     secrets:
-      region: ${{ secrets.AWS_REGION }}
+      #region: ${{ secrets.AWS_REGION }}
       github_pat: ${{ secrets.PA_TOKEN }}
 
   Using-second-reusable-workflow:
@@ -32,4 +32,4 @@ jobs:
     uses: org-548/reusable/.github/workflows/k8s-deployment.yaml@main
     secrets:
       github_pat: ${{ secrets.PA_TOKEN }}
-      region: ${{ secrets.AWS_REGION }}
+      #region: ${{ secrets.AWS_REGION }}
