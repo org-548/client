@@ -1,0 +1,35 @@
+name: Full lifecycle workflow
+
+on:
+  repository_dispatch:
+    type:
+      - trigger-workflow
+  workflow_dispatch:
+
+jobs:
+  Using-first-reusable-workflow:
+  
+    permissions:
+      id-token: write
+      contents: read
+      
+    uses: org-548/reusable/.github/workflows/ecr-build-push.yaml@main
+    with:
+      app_unit: client
+      ecr-repo-name: client-repo
+      values-file: fnt-values.yaml
+    secrets:
+      region: ${{ secrets.AWS_REGION }}
+      github_pat: ${{ secrets.PA_TOKEN }}
+
+  Using-second-reusable-workflow:
+
+    permissions:
+      id-token: write
+      contents: read
+  
+    needs: Using-first-reusable-workflow
+    uses: org-548/reusable/.github/workflows/k8s-deployment.yaml@main
+    secrets:
+      github_pat: ${{ secrets.PA_TOKEN }}
+      region: ${{ secrets.AWS_REGION }}
