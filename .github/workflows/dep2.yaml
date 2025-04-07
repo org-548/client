@@ -1,10 +1,6 @@
 name: Deployment v.2
 
-on:
-  repository_dispatch:
-    type:
-      - trigger-workflow
-  workflow_dispatch:
+on: [workflow_dispatch]
   
 jobs:
   first:
