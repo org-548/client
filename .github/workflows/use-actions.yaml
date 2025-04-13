@@ -5,6 +5,8 @@ on:
     type:
       - trigger-workflow
   workflow_dispatch:
+  push:
+    branches: ["main"]
 
 jobs:
   Using-first-reusable-workflow:
