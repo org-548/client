@@ -1,6 +1,9 @@
 name: Full frontend lifecycle workflow
 
 on:
+  push:
+    branches:
+    - main
   workflow_dispatch:
 
 jobs:
